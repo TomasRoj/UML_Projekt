@@ -124,6 +124,7 @@
             // atributeAccessCombo
             // 
             atributeAccessCombo.FormattingEnabled = true;
+            atributeAccessCombo.Items.AddRange(new object[] { "+", "-", "#", "~" });
             atributeAccessCombo.Location = new Point(12, 97);
             atributeAccessCombo.Name = "atributeAccessCombo";
             atributeAccessCombo.Size = new Size(39, 23);
@@ -150,6 +151,7 @@
             // methodAccessCombo
             // 
             methodAccessCombo.FormattingEnabled = true;
+            methodAccessCombo.Items.AddRange(new object[] { "+", "-", "#", "~" });
             methodAccessCombo.Location = new Point(12, 185);
             methodAccessCombo.Name = "methodAccessCombo";
             methodAccessCombo.Size = new Size(39, 23);
@@ -175,6 +177,7 @@
             // methodDataTypeCombo
             // 
             methodDataTypeCombo.FormattingEnabled = true;
+            methodDataTypeCombo.Items.AddRange(new object[] { "date", "String", "int" });
             methodDataTypeCombo.Location = new Point(223, 185);
             methodDataTypeCombo.Name = "methodDataTypeCombo";
             methodDataTypeCombo.Size = new Size(77, 23);
@@ -183,6 +186,7 @@
             // atributeDataTypeCombo
             // 
             atributeDataTypeCombo.FormattingEnabled = true;
+            atributeDataTypeCombo.Items.AddRange(new object[] { "date", "String", "int" });
             atributeDataTypeCombo.Location = new Point(223, 96);
             atributeDataTypeCombo.Name = "atributeDataTypeCombo";
             atributeDataTypeCombo.Size = new Size(77, 23);
