@@ -15,7 +15,8 @@ namespace UML_Projekt
         private string connectionType { get; set; }
         UmlClass firstSelected = null;
         UmlClass secondSelected = null;
-        private bool connectionMode = false;
+        private bool isConnecting = false;
+        private bool isChecked = false;
 
         public Form1()
         {
@@ -69,7 +70,13 @@ namespace UML_Projekt
                 if (conn.ConType == "Arrow")
                     DrawArrow(g, p1, p2);
                 else if (conn.ConType == "Dashed")
-                    g.DrawLine(Pens.Gray, p1, p2);
+                {
+                    using (Pen dashedPen = new Pen(Color.Black, 2))
+                    {
+                        dashedPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                        g.DrawLine(dashedPen, p1, p2);
+                    }
+                }
                 else
                     g.DrawLine(Pens.Black, p1, p2);
             }
@@ -121,55 +128,53 @@ namespace UML_Projekt
 
         private void DiagramBox_MouseUp(object sender, MouseEventArgs e)
         {
-            UmlClass clicked = FindDiagramAt(e.Location);
-
-            if (connectionMode && clicked != null)
-            {
-                if (firstSelected == null)
-                {
-                    // první klik
-                    firstSelected = clicked;
-                }
-                else
-                {
-                    // druhý klik → vytvoření propojení
-                    connections.Add(new Connection()
-                    {
-                        From = firstSelected,
-                        To = clicked,
-                        ConType= connectionType
-                    });
-
-                    firstSelected = null;
-                    connectionMode = false; // automaticky ukončíme režim
-                    DiagramBox.Invalidate();
-                }
-            }
-
-            // Drag & drop zůstává jako dřív
-            selectedClass = null;
             isDragging = false;
+            selectedClass = null;
         }
 
         private void connectionSimpleBTN_Click(object sender, EventArgs e)
         {
+            isChecked = !isChecked;
+
+            if (isChecked)
+            {
+                connectionSimpleBTN.Text = connectionSimpleBTN.Text + " ✓";
+            }
+            else
+            {
+                connectionSimpleBTN.Text = connectionSimpleBTN.Text.Replace(" ✓", "");
+            }
             this.connectionType = "simple";
-            connectionMode = true;
-            UmlClass firstSelected = null;
+            isConnecting = true;
+            firstSelected = null;
+            secondSelected = null;
         }
 
         private void connectionDashedBTN_Click(object sender, EventArgs e)
         {
-            this.connectionType = "dashed";
-            connectionMode = true;
-            UmlClass firstSelected = null;
+            isChecked = !isChecked;
+
+            if (isChecked)
+            {
+                connectionDashedBTN.Text = connectionDashedBTN.Text + " ✓";
+            }
+            else
+            {
+                connectionDashedBTN.Text = connectionDashedBTN.Text.Replace(" ✓", "");
+            }
+
+            this.connectionType = "Dashed";
+            isConnecting = true;
+            firstSelected = null;
+            secondSelected = null;
         }
 
         private void connectionArrowBTN_Click(object sender, EventArgs e)
         {
-            this.connectionType = "arrow";
-            connectionMode = true;
-            UmlClass firstSelected = null;
+            this.connectionType = "Arrow";
+            isConnecting = true;
+            firstSelected = null;
+            secondSelected = null;
         }
         private void DrawArrow(Graphics g, Point from, Point to)
         {
@@ -182,7 +187,11 @@ namespace UML_Projekt
 
         private void DiagramBox_MouseClick(object sender, MouseEventArgs e)
         {
+            if (!isConnecting)
+                return; // Pokud není aktivní režim propojení, nic nedělej
+
             UmlClass clicked = FindDiagramAt(e.Location);
+            System.Diagnostics.Debug.WriteLine($"Clicked at: {e.Location}, Found: {clicked?.Name}");
             if (clicked != null)
             {
                 if (firstSelected == null)
@@ -196,10 +205,9 @@ namespace UML_Projekt
                         To = secondSelected,
                         ConType = connectionType
                     });
-
                     firstSelected = null;
                     secondSelected = null;
-
+                    isConnecting = false; // propojení hotovo, režim vypnout
                     DiagramBox.Invalidate();
                 }
             }
