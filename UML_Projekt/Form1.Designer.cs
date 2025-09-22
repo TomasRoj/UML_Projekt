@@ -28,12 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            DiagramBox = new PictureBox();
+            addClassBTN = new Button();
+            ((System.ComponentModel.ISupportInitialize)DiagramBox).BeginInit();
+            SuspendLayout();
+            // 
+            // DiagramBox
+            // 
+            DiagramBox.Location = new Point(167, 12);
+            DiagramBox.Name = "DiagramBox";
+            DiagramBox.Size = new Size(952, 613);
+            DiagramBox.TabIndex = 0;
+            DiagramBox.TabStop = false;
+            // 
+            // addClassBTN
+            // 
+            addClassBTN.Location = new Point(12, 12);
+            addClassBTN.Name = "addClassBTN";
+            addClassBTN.Size = new Size(149, 30);
+            addClassBTN.TabIndex = 1;
+            addClassBTN.Text = "Nová class";
+            addClassBTN.UseVisualStyleBackColor = true;
+            addClassBTN.Click += addClassBTN_Click;
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1131, 637);
+            Controls.Add(addClassBTN);
+            Controls.Add(DiagramBox);
+            Name = "Form1";
+            Text = "UML Projekt";
+            ((System.ComponentModel.ISupportInitialize)DiagramBox).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private PictureBox DiagramBox;
+        private Button addClassBTN;
     }
 }

@@ -6,5 +6,10 @@ namespace UML_Projekt
         {
             InitializeComponent();
         }
+
+        private void addClassBTN_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
