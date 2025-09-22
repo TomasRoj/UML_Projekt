@@ -212,5 +212,11 @@ namespace UML_Projekt
                 }
             }
         }
+
+        /* todo
+        private void DiagramBox_DoubleClick(object sender, EventArgs e)
+        {
+            FindDiagramAt();
+        } */
     }
 }
