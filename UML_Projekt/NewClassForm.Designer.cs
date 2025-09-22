@@ -55,6 +55,7 @@
             confirmBTN.TabIndex = 0;
             confirmBTN.Text = "Potvrdit";
             confirmBTN.UseVisualStyleBackColor = true;
+            confirmBTN.Click += confirmBTN_Click;
             // 
             // nameTextBox
             // 
@@ -138,6 +139,7 @@
             atributeAddBTN.TabIndex = 9;
             atributeAddBTN.Text = "Přidat atribut";
             atributeAddBTN.UseVisualStyleBackColor = true;
+            atributeAddBTN.Click += atributeAddBTN_Click;
             // 
             // addMethodBTN
             // 
@@ -147,6 +149,7 @@
             addMethodBTN.TabIndex = 13;
             addMethodBTN.Text = "Přidat atribut";
             addMethodBTN.UseVisualStyleBackColor = true;
+            addMethodBTN.Click += addMethodBTN_Click;
             // 
             // methodAccessCombo
             // 
