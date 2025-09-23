@@ -147,7 +147,7 @@
             addMethodBTN.Name = "addMethodBTN";
             addMethodBTN.Size = new Size(288, 23);
             addMethodBTN.TabIndex = 13;
-            addMethodBTN.Text = "Přidat atribut";
+            addMethodBTN.Text = "Přidat metodu";
             addMethodBTN.UseVisualStyleBackColor = true;
             addMethodBTN.Click += addMethodBTN_Click;
             // 

@@ -47,8 +47,8 @@
             DiagramBox.TabIndex = 0;
             DiagramBox.TabStop = false;
             DiagramBox.Paint += DiagramBox_Paint_1;
-            DiagramBox.DoubleClick += DiagramBox_DoubleClick;
             DiagramBox.MouseClick += DiagramBox_MouseClick;
+            DiagramBox.MouseDoubleClick += DiagramBox_MouseDoubleClick;
             DiagramBox.MouseDown += DiagramBox_MouseDown;
             DiagramBox.MouseMove += DiagramBox_MouseMove;
             DiagramBox.MouseUp += DiagramBox_MouseUp;

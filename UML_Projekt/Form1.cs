@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Security.Cryptography.Xml;
+using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
 
 namespace UML_Projekt
@@ -213,10 +214,33 @@ namespace UML_Projekt
             }
         }
 
-        /* todo
-        private void DiagramBox_DoubleClick(object sender, EventArgs e)
+        private void DiagramBox_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            FindDiagramAt();
-        } */
+            FindDiagramAt(e.Location);
+            if (selectedClass != null)
+            {
+                EditForm newEditForm = new EditForm(selectedClass);
+                newEditForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+
+                newEditForm.MaximizeBox = false;
+                newEditForm.MinimizeBox = false;
+                newEditForm.StartPosition = FormStartPosition.CenterScreen;
+
+                using (newEditForm)
+                {
+                    
+                    if (newEditForm.ShowDialog() == DialogResult.OK)
+                    {
+                        selectedClass.Name = newEditForm.EditedClass.Name;
+                        selectedClass.Atributes = newEditForm.EditedClass.Atributes;
+                        selectedClass.Methods = newEditForm.EditedClass.Methods;
+                        selectedClass.IsAbstract = newEditForm.EditedClass.IsAbstract;
+                        selectedClass.IsStatic = newEditForm.EditedClass.IsStatic;
+
+                        this.DiagramBox.Invalidate();
+                    }
+                }
+            }
+        }
     }
 }
