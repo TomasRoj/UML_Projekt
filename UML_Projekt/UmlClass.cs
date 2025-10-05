@@ -7,19 +7,14 @@ using System.Xml.Linq;
 
 namespace UML_Projekt
 {
-    public class UmlClass
+    public class UmlClass : UmlElement
     {
-        public string Name { get; set; }
+
         public List<UmlAtribute> Atributes { get; set; }
         public List<UmlMethod> Methods { get; set; }
 
         public bool IsAbstract { get; set; }
         public bool IsStatic { get; set; }
-
-        public Rectangle Bounds { get; set; }
-
-        public Point Position { get; set; }
-        public Size Size { get; set; } = new Size(120, 60);
 
         public UmlClass(string name, List<UmlAtribute> atributes, List<UmlMethod> methods, bool isAbstract, bool isStatic)
         {
@@ -54,16 +49,12 @@ namespace UML_Projekt
             return sb.ToString();
         }
 
-        public void Draw(Graphics g)
+        public override void Draw(Graphics g)
         {
-            // Rámeček
-           // g.DrawRectangle(Pens.Black, Bounds);
             g.FillRectangle(Brushes.Beige, Bounds);
 
-            // rozdělení na 3 části: název, atributy, metody
             int y = Bounds.Top;
 
-            // Hlavička (název)
             Font headerFont = new Font("Arial", 10, FontStyle.Bold);
             SizeF nameSize = g.MeasureString(Name, headerFont);
             g.DrawString(Name, headerFont, Brushes.Black,
