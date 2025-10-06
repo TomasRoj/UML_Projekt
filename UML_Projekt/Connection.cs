@@ -29,7 +29,6 @@ namespace UML_Projekt
                 ? new Pen(Color.Black) { DashStyle = DashStyle.Dash }
                 : Pens.Black;
 
-            // Nakresli dvě úsečky (pravý úhel) nebo jednu, pokud jsou téměř v jedné ose
             g.DrawLine(pen, start, mid);
             if (mid != end)
                 g.DrawLine(pen, mid, end);
@@ -58,7 +57,7 @@ namespace UML_Projekt
             }
         }
 
-        // Pomocná metoda pro výpočet středu nejbližší strany
+        // výpočet středu nejbližší strany
         private PointF GetClosestSideCenter(UmlElement from, UmlElement to)
         {
             RectangleF rect = new RectangleF(from.Position, from.Size);

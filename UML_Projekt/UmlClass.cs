@@ -54,8 +54,15 @@ namespace UML_Projekt
             g.FillRectangle(Brushes.Beige, Bounds);
 
             int y = Bounds.Top;
-
             Font headerFont = new Font("Arial", 10, FontStyle.Bold);
+
+            if (this.IsAbstract)
+            {
+               headerFont = new Font("Arial", 10, FontStyle.Italic);
+            } else
+            {
+                headerFont = new Font("Arial", 10, FontStyle.Bold);
+            }
             SizeF nameSize = g.MeasureString(Name, headerFont);
             g.DrawString(Name, headerFont, Brushes.Black,
                 Bounds.Left + (Bounds.Width - nameSize.Width) / 2, y);
