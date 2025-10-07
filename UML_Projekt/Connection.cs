@@ -13,6 +13,20 @@ namespace UML_Projekt
         public UmlElement To { get; set; }
         public RelationType Type { get; set; }
 
+        public string MultiplicityFrom { get; set; }
+        public string MultiplicityTo { get; set; }
+
+        public void Reverse()
+        {
+            var tempElement = From;
+            From = To;
+            To = tempElement;
+
+            var tempMultiplicity = MultiplicityFrom;
+            MultiplicityFrom = MultiplicityTo;
+            MultiplicityTo = tempMultiplicity;
+        }
+
         public void Draw(Graphics g)
         {
             PointF start = GetClosestSideCenter(From, To);
@@ -32,6 +46,9 @@ namespace UML_Projekt
             g.DrawLine(pen, start, mid);
             if (mid != end)
                 g.DrawLine(pen, mid, end);
+
+            DrawMultiplicity(g, start, MultiplicityFrom);
+            DrawMultiplicity(g, end, MultiplicityTo);
 
             // Nakresli šipku/diamant/trojúhelník na konci
             switch (Type)
@@ -57,8 +74,21 @@ namespace UML_Projekt
             }
         }
 
+        private void DrawMultiplicity(Graphics g, PointF position, string multiplicity)
+        {
+            if (!string.IsNullOrEmpty(multiplicity))
+            {
+                using (Font font = new Font("Arial", 9))
+                {
+                    float offsetX = 5;
+                    float offsetY = -10;
+                    g.DrawString(multiplicity, font, Brushes.Black, position.X + offsetX, position.Y + offsetY);
+                }
+            }
+        }
+
         // výpočet středu nejbližší strany
-        private PointF GetClosestSideCenter(UmlElement from, UmlElement to)
+        public PointF GetClosestSideCenter(UmlElement from, UmlElement to)
         {
             RectangleF rect = new RectangleF(from.Position, from.Size);
             PointF toCenter = new PointF(to.Position.X + to.Size.Width / 2f, to.Position.Y + to.Size.Height / 2f);

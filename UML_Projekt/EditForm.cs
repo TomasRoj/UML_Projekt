@@ -99,6 +99,7 @@ namespace UML_Projekt
         private void btnDeleteMethod_Click(object sender, EventArgs e)
         {
             this.methodAccessCombo.Items.RemoveAt(this.methodAccessCombo.SelectedIndex);
+            this.methodAccessCombo.Refresh();
             this.EditedClass.Methods = GetNewMethods();
         }
     }

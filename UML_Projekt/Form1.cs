@@ -116,6 +116,33 @@ namespace UML_Projekt
                 return;
             }
 
+            if (e.Button == MouseButtons.Left)
+            {
+                Connection clickedConnection = FindConnectionAtPoint(e.Location);
+
+                if (clickedConnection != null)
+                {
+                    var editForm = new EditConnection(clickedConnection);
+                    editForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+                    editForm.MaximizeBox = false;
+                    editForm.MinimizeBox = false;
+                    editForm.StartPosition = FormStartPosition.CenterScreen;
+
+                    using (editForm)
+                    {
+                        if (editForm.ShowDialog() == DialogResult.OK)
+                        {
+                            if (editForm.isDeleted)
+                            {
+                                connections.Remove(clickedConnection);
+                            }
+
+                            DiagramBox.Invalidate();
+                        }
+                    }
+                }
+            }
+
             PointF diagramPoint = ScreenToDiagram(e.Location);
 
             System.Diagnostics.Debug.WriteLine($"Checking {diagramElements.Count} elements");
@@ -131,6 +158,51 @@ namespace UML_Projekt
                 }
             }
         }
+
+        private Connection FindConnectionAtPoint(Point mousePos)
+        {
+            const float tolerance = 5f; // pixely od čáry
+
+            foreach (var conn in connections)
+            {
+                PointF start = conn.GetClosestSideCenter(conn.From, conn.To);
+                PointF end = conn.GetClosestSideCenter(conn.To, conn.From);
+
+                // případná „lamaná“ čára s mid bodem
+                PointF mid = new PointF(start.X, end.Y);
+                if (Math.Abs(start.X - end.X) < 5 || Math.Abs(start.Y - end.Y) < 5)
+                    mid = end;
+
+                // Zkontroluj první segment
+                if (DistanceFromPointToLine(mousePos, start, mid) <= tolerance)
+                    return conn;
+
+                // Zkontroluj druhý segment, pokud existuje
+                if (mid != end && DistanceFromPointToLine(mousePos, mid, end) <= tolerance)
+                    return conn;
+            }
+
+            return null;
+        }
+
+        private float DistanceFromPointToLine(PointF p, PointF a, PointF b)
+        {
+            float dx = b.X - a.X;
+            float dy = b.Y - a.Y;
+
+            if (dx == 0 && dy == 0)
+                return (float)Math.Sqrt((p.X - a.X) * (p.X - a.X) + (p.Y - a.Y) * (p.Y - a.Y));
+
+            float t = ((p.X - a.X) * dx + (p.Y - a.Y) * dy) / (dx * dx + dy * dy);
+            t = Math.Max(0, Math.Min(1, t));
+
+            float closestX = a.X + t * dx;
+            float closestY = a.Y + t * dy;
+
+            return (float)Math.Sqrt((p.X - closestX) * (p.X - closestX) + (p.Y - closestY) * (p.Y - closestY));
+        }
+
+
 
         private UmlElement FindDiagramAt(Point location)
         {
