@@ -34,6 +34,7 @@ namespace UML_Projekt
             DiagramBox.BackColor = Color.Gray;
             this.MouseWheel += Form1_MouseWheel;
             DiagramBox.MouseEnter += (s, e) => DiagramBox.Focus();
+            DiagramBox.KeyDown += DiagramBox_KeyDown;
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
@@ -46,6 +47,21 @@ namespace UML_Projekt
             offset.Y = e.Y - (e.Y - offset.Y) * (zoom / oldZoom);
             DiagramBox.Invalidate();
         }
+        private void DiagramBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && selectedElement != null)
+            {
+                connections.RemoveAll(c => c.From == selectedElement || c.To == selectedElement);
+
+                diagramElements.Remove(selectedElement);
+
+                selectedElement = null;
+                isDragging = false;
+
+                DiagramBox.Invalidate();
+            }
+        }
+
 
         private void addClassBTN_Click(object sender, EventArgs e)
         {
@@ -140,6 +156,7 @@ namespace UML_Projekt
                             DiagramBox.Invalidate();
                         }
                     }
+                    return; 
                 }
             }
 
@@ -154,6 +171,7 @@ namespace UML_Projekt
                     selectedElement = cls;
                     mouseOffset = new Point((int)(diagramPoint.X - cls.Position.X), (int)(diagramPoint.Y - cls.Position.Y));
                     isDragging = true;
+                    DiagramBox.Invalidate();
                     break;
                 }
             }
@@ -161,25 +179,31 @@ namespace UML_Projekt
 
         private Connection FindConnectionAtPoint(Point mousePos)
         {
-            const float tolerance = 5f; // pixely od čáry
+            const float tolerance = 5f; //tolerance
 
             foreach (var conn in connections)
             {
                 PointF start = conn.GetClosestSideCenter(conn.From, conn.To);
                 PointF end = conn.GetClosestSideCenter(conn.To, conn.From);
 
-                // případná „lamaná“ čára s mid bodem
+                // mid bod
                 PointF mid = new PointF(start.X, end.Y);
                 if (Math.Abs(start.X - end.X) < 5 || Math.Abs(start.Y - end.Y) < 5)
+                {
                     mid = end;
+                }
 
-                // Zkontroluj první segment
+                // prvni segment
                 if (DistanceFromPointToLine(mousePos, start, mid) <= tolerance)
+                {
                     return conn;
+                }
 
-                // Zkontroluj druhý segment, pokud existuje
+                // drúhy segment
                 if (mid != end && DistanceFromPointToLine(mousePos, mid, end) <= tolerance)
+                {
                     return conn;
+                }
             }
 
             return null;

@@ -43,18 +43,47 @@ namespace UML_Projekt
                 ? new Pen(Color.Black) { DashStyle = DashStyle.Dash }
                 : Pens.Black;
 
-            g.DrawLine(pen, start, mid);
-            if (mid != end)
-                g.DrawLine(pen, mid, end);
+            PointF adjustedStart = start;
+            PointF adjustedEnd = end;
+            PointF adjustedMid = mid;
 
-            DrawMultiplicity(g, start, MultiplicityFrom);
-            DrawMultiplicity(g, end, MultiplicityTo);
+            if (Type == RelationType.Aggregation || Type == RelationType.Composition)
+            {
+                adjustedStart = GetOffsetPoint(start, mid, 20f);
+                if (mid != end)
+                {
+                    adjustedMid = new PointF(adjustedStart.X, end.Y);
+                }
+                else
+                {
+                    adjustedMid = adjustedStart;
+                }
+            }
 
-            // Nakresli šipku/diamant/trojúhelník na konci
+            if (Type == RelationType.Association || Type == RelationType.Generalization ||
+                Type == RelationType.Realization || Type == RelationType.Dependency)
+            {
+                if (mid != end)
+                {
+                    adjustedEnd = GetOffsetPoint(end, adjustedMid, 15f);
+                }
+                else
+                {
+                    adjustedEnd = GetOffsetPoint(end, adjustedStart, 15f);
+                }
+            }
+
+            g.DrawLine(pen, adjustedStart, adjustedMid);
+            if (adjustedMid != adjustedEnd)
+                g.DrawLine(pen, adjustedMid, adjustedEnd);
+
+            DrawMultiplicity(g, start, MultiplicityFrom, start, mid);
+            DrawMultiplicity(g, end, MultiplicityTo, end, mid);
+
             switch (Type)
             {
                 case RelationType.Association:
-                    DrawArrowHead(g, end, mid, false);
+                    DrawArrowHead(g, end, adjustedMid, false);
                     break;
                 case RelationType.Aggregation:
                     DrawDiamond(g, start, mid, false);
@@ -63,25 +92,51 @@ namespace UML_Projekt
                     DrawDiamond(g, start, mid, true);
                     break;
                 case RelationType.Generalization:
-                    DrawTriangle(g, end, mid, false);
+                    DrawTriangle(g, end, adjustedMid, false);
                     break;
                 case RelationType.Realization:
-                    DrawTriangle(g, end, mid, true);
+                    DrawTriangle(g, end, adjustedMid, true);
                     break;
                 case RelationType.Dependency:
-                    DrawArrowHead(g, end, mid, true);
+                    DrawArrowHead(g, end, adjustedMid, true);
                     break;
             }
         }
 
-        private void DrawMultiplicity(Graphics g, PointF position, string multiplicity)
+        private PointF GetOffsetPoint(PointF from, PointF to, float offset)
+        {
+            float dx = to.X - from.X;
+            float dy = to.Y - from.Y;
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+
+            if (length < 0.001f) return from;
+
+            float ratio = offset / length;
+            return new PointF(
+                from.X + dx * ratio,
+                from.Y + dy * ratio
+            );
+        }
+
+        private void DrawMultiplicity(Graphics g, PointF position, string multiplicity, PointF lineStart, PointF lineEnd)
         {
             if (!string.IsNullOrEmpty(multiplicity))
             {
                 using (Font font = new Font("Arial", 9))
                 {
-                    float offsetX = 5;
-                    float offsetY = -10;
+                    // Zjisti směr čáry pro lepší umístění textu
+                    float dx = lineEnd.X - lineStart.X;
+                    float dy = lineEnd.Y - lineStart.Y;
+
+                    float offsetX = 10;
+                    float offsetY = -15;
+
+                    // Pokud je čára horizontální, posuň text dolů
+                    if (Math.Abs(dy) < Math.Abs(dx))
+                    {
+                        offsetY = 5;
+                    }
+
                     g.DrawString(multiplicity, font, Brushes.Black, position.X + offsetX, position.Y + offsetY);
                 }
             }
@@ -121,58 +176,6 @@ namespace UML_Projekt
 
         private void DrawArrowHead(Graphics g, PointF tip, PointF tail, bool open)
         {
-            const float size = 10f;
-            float angle = (float)Math.Atan2(tip.Y - tail.Y, tip.X - tail.X);
-
-            PointF p1 = new PointF(
-                tip.X - size * (float)Math.Cos(angle - Math.PI / 6),
-                tip.Y - size * (float)Math.Sin(angle - Math.PI / 6));
-            PointF p2 = new PointF(
-                tip.X - size * (float)Math.Cos(angle + Math.PI / 6),
-                tip.Y - size * (float)Math.Sin(angle + Math.PI / 6));
-
-            if (open)
-            {
-                g.DrawLine(Pens.Black, tip, p1);
-            }
-            else
-            {
-                g.FillPolygon(Brushes.Black, new[] { tip, p1, p2 });
-            }
-        }
-
-        private void DrawDiamond(Graphics g, PointF start, PointF end, bool filled)
-        {
-            const float size = 15f;
-            float angle = (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
-
-            PointF tip = start;
-            PointF back = new PointF(
-                start.X + size * (float)Math.Cos(angle),
-                start.Y + size * (float)Math.Sin(angle));
-
-            PointF left = new PointF(
-                start.X + size * 0.5f * (float)Math.Cos(angle + Math.PI / 2),
-                start.Y + size * 0.5f * (float)Math.Sin(angle + Math.PI / 2));
-
-            PointF right = new PointF(
-                start.X + size * 0.5f * (float)Math.Cos(angle - Math.PI / 2),
-                start.Y + size * 0.5f * (float)Math.Sin(angle - Math.PI / 2));
-
-            PointF[] points = new[] { tip, left, back, right };
-
-            if (filled)
-            {
-                g.FillPolygon(Brushes.Black, points);
-            }
-            else
-            {
-                g.DrawPolygon(Pens.Black, points);
-            }
-        }
-
-        private void DrawTriangle(Graphics g, PointF tip, PointF tail, bool open)
-        {
             const float size = 12f;
             float angle = (float)Math.Atan2(tip.Y - tail.Y, tip.X - tail.X);
 
@@ -185,7 +188,8 @@ namespace UML_Projekt
 
             if (open)
             {
-                g.DrawPolygon(Pens.Black, new[] { tip, p1, p2 });
+                g.DrawLine(Pens.Black, tip, p1);
+                g.DrawLine(Pens.Black, tip, p2);
             }
             else
             {
@@ -193,6 +197,62 @@ namespace UML_Projekt
             }
         }
 
+        private void DrawDiamond(Graphics g, PointF start, PointF end, bool filled)
+        {
+            const float size = 16f;
+            float angle = (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
 
+            PointF tip = start;
+            PointF back = new PointF(
+                start.X + size * (float)Math.Cos(angle),
+                start.Y + size * (float)Math.Sin(angle));
+
+            PointF mid = new PointF(
+                start.X + size * 0.5f * (float)Math.Cos(angle),
+                start.Y + size * 0.5f * (float)Math.Sin(angle));
+
+            PointF left = new PointF(
+                mid.X + size * 0.5f * (float)Math.Cos(angle + Math.PI / 2),
+                mid.Y + size * 0.5f * (float)Math.Sin(angle + Math.PI / 2));
+
+            PointF right = new PointF(
+                mid.X + size * 0.5f * (float)Math.Cos(angle - Math.PI / 2),
+                mid.Y + size * 0.5f * (float)Math.Sin(angle - Math.PI / 2));
+
+            PointF[] points = new[] { tip, left, back, right };
+
+            if (filled)
+            {
+                g.FillPolygon(Brushes.Black, points);
+            }
+            else
+            {
+                g.DrawPolygon(Pens.Black, points);
+                g.FillPolygon(Brushes.White, points);
+            }
+        }
+
+        private void DrawTriangle(Graphics g, PointF tip, PointF tail, bool open)
+        {
+            const float size = 14f;
+            float angle = (float)Math.Atan2(tip.Y - tail.Y, tip.X - tail.X);
+
+            PointF p1 = new PointF(
+                tip.X - size * (float)Math.Cos(angle - Math.PI / 6),
+                tip.Y - size * (float)Math.Sin(angle - Math.PI / 6));
+            PointF p2 = new PointF(
+                tip.X - size * (float)Math.Cos(angle + Math.PI / 6),
+                tip.Y - size * (float)Math.Sin(angle + Math.PI / 6));
+
+            if (open)
+            {
+                g.DrawPolygon(Pens.Black, new[] { tip, p1, p2 });
+                g.FillPolygon(Brushes.White, new[] { tip, p1, p2 });
+            }
+            else
+            {
+                g.FillPolygon(Brushes.Black, new[] { tip, p1, p2 });
+            }
+        }
     }
 }

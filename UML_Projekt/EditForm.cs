@@ -14,6 +14,7 @@ namespace UML_Projekt
     {
 
         public UmlClass EditedClass { get; set; }
+
         public EditForm(UmlClass umlclass)
         {
             InitializeComponent();
@@ -101,6 +102,11 @@ namespace UML_Projekt
             this.methodAccessCombo.Items.RemoveAt(this.methodAccessCombo.SelectedIndex);
             this.methodAccessCombo.Refresh();
             this.EditedClass.Methods = GetNewMethods();
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

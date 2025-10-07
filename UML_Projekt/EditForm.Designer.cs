@@ -46,6 +46,7 @@
             confirmBTN = new Button();
             btnDeleteAtribut = new Button();
             btnDeleteMethod = new Button();
+            btnDelete = new Button();
             SuspendLayout();
             // 
             // atributeDataTypeCombo
@@ -217,11 +218,22 @@
             btnDeleteMethod.UseVisualStyleBackColor = true;
             btnDeleteMethod.Click += btnDeleteMethod_Click;
             // 
+            // btnDelete
+            // 
+            btnDelete.Location = new Point(16, 522);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(285, 34);
+            btnDelete.TabIndex = 34;
+            btnDelete.Text = "Smazat class";
+            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
+            // 
             // EditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(316, 530);
+            ClientSize = new Size(316, 568);
+            Controls.Add(btnDelete);
             Controls.Add(btnDeleteMethod);
             Controls.Add(btnDeleteAtribut);
             Controls.Add(atributeDataTypeCombo);
@@ -266,5 +278,6 @@
         private Button confirmBTN;
         private Button btnDeleteAtribut;
         private Button btnDeleteMethod;
+        private Button btnDelete;
     }
 }
