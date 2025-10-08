@@ -741,17 +741,17 @@ namespace UML_Projekt
                 if (el is UmlEnum umlEnum)
                 {
                     sb.AppendLine($"public enum {className}");
-                    sb.AppendLine("{");
+                    sb.AppendLine(" {");
                     if (umlEnum.Values != null && umlEnum.Values.Count > 0)
                     {
                         for (int i = 0; i < umlEnum.Values.Count; i++)
                         {
                             var attr = umlEnum.Values[i];
                             string comma = i < umlEnum.Values.Count - 1 ? "," : "";
-                            sb.AppendLine($"    {attr}{comma}");
+                            sb.AppendLine($"        {attr}{comma}");
                         }
                     }
-                    sb.AppendLine("}");
+                    sb.AppendLine(" }");
                 }
                 else if (el is UmlInterface umlInterface)
                 {

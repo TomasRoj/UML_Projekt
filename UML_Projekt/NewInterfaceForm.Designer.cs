@@ -41,7 +41,7 @@
             // methodDataTypeCombo
             // 
             methodDataTypeCombo.FormattingEnabled = true;
-            methodDataTypeCombo.Items.AddRange(new object[] { "date", "String", "int" });
+            methodDataTypeCombo.Items.AddRange(new object[] { "Date", "string", "int", "bool", "void" });
             methodDataTypeCombo.Location = new Point(223, 70);
             methodDataTypeCombo.Name = "methodDataTypeCombo";
             methodDataTypeCombo.Size = new Size(77, 23);

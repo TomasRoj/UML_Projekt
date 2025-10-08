@@ -180,7 +180,7 @@
             // methodDataTypeCombo
             // 
             methodDataTypeCombo.FormattingEnabled = true;
-            methodDataTypeCombo.Items.AddRange(new object[] { "date", "String", "int" });
+            methodDataTypeCombo.Items.AddRange(new object[] { "Date", "string", "int", "bool", "void" });
             methodDataTypeCombo.Location = new Point(223, 185);
             methodDataTypeCombo.Name = "methodDataTypeCombo";
             methodDataTypeCombo.Size = new Size(77, 23);
@@ -189,7 +189,7 @@
             // atributeDataTypeCombo
             // 
             atributeDataTypeCombo.FormattingEnabled = true;
-            atributeDataTypeCombo.Items.AddRange(new object[] { "date", "String", "int" });
+            atributeDataTypeCombo.Items.AddRange(new object[] { "date", "string", "int", "bool" });
             atributeDataTypeCombo.Location = new Point(223, 96);
             atributeDataTypeCombo.Name = "atributeDataTypeCombo";
             atributeDataTypeCombo.Size = new Size(77, 23);
