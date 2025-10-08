@@ -43,7 +43,6 @@
             btnImport = new Button();
             btnExportPNG = new Button();
             btnExportCode = new Button();
-            savePNGDialog = new SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)DiagramBox).BeginInit();
             SuspendLayout();
             // 
@@ -162,21 +161,23 @@
             // 
             // btnExport
             // 
-            btnExport.Location = new Point(12, 423);
+            btnExport.Location = new Point(12, 515);
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(149, 23);
             btnExport.TabIndex = 11;
             btnExport.Text = "Uložit";
             btnExport.UseVisualStyleBackColor = true;
+            btnExport.Click += btnExport_Click;
             // 
             // btnImport
             // 
-            btnImport.Location = new Point(12, 452);
+            btnImport.Location = new Point(12, 544);
             btnImport.Name = "btnImport";
             btnImport.Size = new Size(149, 23);
             btnImport.TabIndex = 12;
             btnImport.Text = "Načíst";
             btnImport.UseVisualStyleBackColor = true;
+            btnImport.Click += btnImport_Click;
             // 
             // btnExportPNG
             // 
@@ -242,6 +243,5 @@
         private Button btnImport;
         private Button btnExportPNG;
         private Button btnExportCode;
-        private SaveFileDialog savePNGDialog;
     }
 }

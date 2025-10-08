@@ -12,6 +12,8 @@ namespace UML_Projekt
         public Size Size { get; set; }
         public string Name { get; set; }
 
+        public UmlElement() { }
+
         public PointF Center => new PointF(
             Position.X + Size.Width / 2f,
             Position.Y + Size.Height / 2f

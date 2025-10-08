@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
 using System.Security.Cryptography.Xml;
+using System.Text.Json;
 using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
 
@@ -617,6 +619,7 @@ namespace UML_Projekt
                 sfd.Title = "Uložit diagram jako PNG";
                 sfd.Filter = "PNG obrázek (*.png)|*.png";
                 sfd.FileName = "diagram.png";
+                sfd.DefaultExt = "png";
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
@@ -624,6 +627,95 @@ namespace UML_Projekt
                     MessageBox.Show("Diagram byl úspěšně exportován do PNG.", "Export hotov", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+        }
+
+        private void ExportJSONDialog()
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Title = "Uložit JSON";
+                sfd.FileName = "diagram.json";
+                sfd.Filter = "JSON soubory (*.json)|*.json|Všechny soubory (*.*)|*.*";
+                sfd.DefaultExt = "json";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    ExportToJson(sfd.FileName);
+                    MessageBox.Show("Diagram byl úspěšně exportován do JSON.", "Export hotov", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+            }
+        }
+
+        public void ExportToJson(string path)
+        {
+            var data = new DiagramData
+            {
+                elements = diagramElements,
+                connections = connections
+            };
+
+            
+            var options = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                Formatting = Formatting.Indented
+            }; 
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(data, options));
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            ExportJSONDialog();
+        }
+        public class DiagramData
+        {
+            public List<UmlElement> elements { get; set; }
+            public List<Connection> connections { get; set; }
+        }
+
+        public void ImportFromJson(string path)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            string json = File.ReadAllText(path);
+
+            var data = JsonConvert.DeserializeObject<DiagramData>(json, settings);
+
+            diagramElements = data.elements;
+            connections = data.connections;
+
+            foreach (var conn in connections)
+            {
+                conn.From = diagramElements.FirstOrDefault(e => e.Name == conn.From.Name);
+                conn.To = diagramElements.FirstOrDefault(e => e.Name == conn.To.Name);
+            }
+
+            DiagramBox.Invalidate();
+        }
+
+        private void ImportFromJsonDialog()
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Otevřít JSON";
+                ofd.Filter = "JSON soubory (*.json)|*.json|Všechny soubory (*.*)|*.*";
+                ofd.DefaultExt = "json";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    ImportFromJson(ofd.FileName);
+                    MessageBox.Show("Diagram byl úspěšně importován z JSON.", "Import hotov", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            ImportFromJsonDialog();
         }
     }
 }
