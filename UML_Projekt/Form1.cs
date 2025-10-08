@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography.Xml;
+﻿using System.IO;
+using System.Security.Cryptography.Xml;
 using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
 
@@ -156,7 +157,7 @@ namespace UML_Projekt
                             DiagramBox.Invalidate();
                         }
                     }
-                    return; 
+                    return;
                 }
             }
 
@@ -374,7 +375,7 @@ namespace UML_Projekt
             }
         }
 
-        
+
         private void DiagramBox_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             UmlElement selectedElement = FindDiagramAt(e.Location);
@@ -437,7 +438,7 @@ namespace UML_Projekt
                     }
                 }
             }
-        } 
+        }
 
         private void addInterfaceBTN_Click(object sender, EventArgs e)
         {
@@ -560,6 +561,69 @@ namespace UML_Projekt
             isConnecting = true;
             firstSelected = null;
             secondSelected = null;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnExportPNG_Click(object sender, EventArgs e)
+        {
+            ExportToPngDialog();
+        }
+
+        private void ExportToPng(string filePath)
+        {
+            if (diagramElements.Count == 0)
+            {
+                MessageBox.Show("Na plátně nejsou žádné elementy k exportu.");
+                return;
+            }
+
+            int maxX = diagramElements.Max(e => e.Position.X + e.Size.Width);
+            int maxY = diagramElements.Max(e => e.Position.Y + e.Size.Height);
+            int minX = diagramElements.Min(e => e.Position.X);
+            int minY = diagramElements.Min(e => e.Position.Y);
+
+            int padding = 50;
+
+            int width = (maxX - minX) + padding * 2;
+            int height = (maxY - minY) + padding * 2;
+
+            Bitmap bmp = new Bitmap(width, height);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.White);
+                g.TranslateTransform(-minX + padding, -minY + padding);
+
+                foreach (var el in diagramElements)
+                {
+                    el.Draw(g);
+                }
+                foreach (var c in connections)
+                {
+                    c.Draw(g);
+                }
+            }
+            bmp.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+        }
+
+        private void ExportToPngDialog()
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Title = "Uložit diagram jako PNG";
+                sfd.Filter = "PNG obrázek (*.png)|*.png";
+                sfd.FileName = "diagram.png";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    ExportToPng(sfd.FileName);
+                    MessageBox.Show("Diagram byl úspěšně exportován do PNG.", "Export hotov", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
     }
 }

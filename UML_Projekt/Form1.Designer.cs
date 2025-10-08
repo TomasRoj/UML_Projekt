@@ -39,6 +39,11 @@
             addInterfaceBTN = new Button();
             addEnumBTN = new Button();
             button1 = new Button();
+            btnExport = new Button();
+            btnImport = new Button();
+            btnExportPNG = new Button();
+            btnExportCode = new Button();
+            savePNGDialog = new SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)DiagramBox).BeginInit();
             SuspendLayout();
             // 
@@ -155,11 +160,52 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // btnExport
+            // 
+            btnExport.Location = new Point(12, 423);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new Size(149, 23);
+            btnExport.TabIndex = 11;
+            btnExport.Text = "Uložit";
+            btnExport.UseVisualStyleBackColor = true;
+            // 
+            // btnImport
+            // 
+            btnImport.Location = new Point(12, 452);
+            btnImport.Name = "btnImport";
+            btnImport.Size = new Size(149, 23);
+            btnImport.TabIndex = 12;
+            btnImport.Text = "Načíst";
+            btnImport.UseVisualStyleBackColor = true;
+            // 
+            // btnExportPNG
+            // 
+            btnExportPNG.Location = new Point(12, 573);
+            btnExportPNG.Name = "btnExportPNG";
+            btnExportPNG.Size = new Size(149, 23);
+            btnExportPNG.TabIndex = 13;
+            btnExportPNG.Text = "Export PNG";
+            btnExportPNG.UseVisualStyleBackColor = true;
+            btnExportPNG.Click += btnExportPNG_Click;
+            // 
+            // btnExportCode
+            // 
+            btnExportCode.Location = new Point(12, 602);
+            btnExportCode.Name = "btnExportCode";
+            btnExportCode.Size = new Size(149, 23);
+            btnExportCode.TabIndex = 14;
+            btnExportCode.Text = "Export C#";
+            btnExportCode.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1131, 637);
+            Controls.Add(btnExportCode);
+            Controls.Add(btnExportPNG);
+            Controls.Add(btnImport);
+            Controls.Add(btnExport);
             Controls.Add(button1);
             Controls.Add(addEnumBTN);
             Controls.Add(addInterfaceBTN);
@@ -173,6 +219,7 @@
             Controls.Add(DiagramBox);
             Name = "Form1";
             Text = "UML Projekt";
+            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)DiagramBox).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -191,5 +238,10 @@
         private Button addInterfaceBTN;
         private Button addEnumBTN;
         private Button button1;
+        private Button btnExport;
+        private Button btnImport;
+        private Button btnExportPNG;
+        private Button btnExportCode;
+        private SaveFileDialog savePNGDialog;
     }
 }
