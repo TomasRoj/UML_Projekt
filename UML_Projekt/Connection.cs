@@ -32,50 +32,36 @@ namespace UML_Projekt
             PointF start = GetClosestSideCenter(From, To);
             PointF end = GetClosestSideCenter(To, From);
 
-            PointF mid = new PointF(start.X, end.Y);
-
-            if (Math.Abs(start.X - end.X) < 5 || Math.Abs(start.Y - end.Y) < 5)
-            {
-                mid = end;
-            }
-
             Pen pen = Type == RelationType.Dependency || Type == RelationType.Realization
                 ? new Pen(Color.Black) { DashStyle = DashStyle.Dash }
                 : Pens.Black;
 
-            PointF adjustedStart = start;
-            PointF adjustedEnd = end;
-            PointF adjustedMid = mid;
+            float dx = end.X - start.X;
+            float dy = end.Y - start.Y;
+            float len = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (len == 0) len = 1;
+            dx /= len;
+            dy /= len;
 
-            if (Type == RelationType.Aggregation || Type == RelationType.Composition)
+            const float offset = 10f;
+            PointF exitStart = new PointF(start.X + dx * offset, start.Y + dy * offset);
+            PointF entryEnd = new PointF(end.X - dx * offset, end.Y - dy * offset);
+
+            PointF mid = new PointF(exitStart.X, entryEnd.Y);
+            if (Math.Abs(exitStart.X - entryEnd.X) < 5 || Math.Abs(exitStart.Y - entryEnd.Y) < 5)
             {
-                adjustedStart = GetOffsetPoint(start, mid, 20f);
-                if (mid != end)
-                {
-                    adjustedMid = new PointF(adjustedStart.X, end.Y);
-                }
-                else
-                {
-                    adjustedMid = adjustedStart;
-                }
+                mid = entryEnd;
             }
 
-            if (Type == RelationType.Association || Type == RelationType.Generalization ||
-                Type == RelationType.Realization || Type == RelationType.Dependency)
+            g.DrawLine(pen, start, exitStart);
+
+            g.DrawLine(pen, exitStart, mid);
+            if (mid != entryEnd)
             {
-                if (mid != end)
-                {
-                    adjustedEnd = GetOffsetPoint(end, adjustedMid, 15f);
-                }
-                else
-                {
-                    adjustedEnd = GetOffsetPoint(end, adjustedStart, 15f);
-                }
+                g.DrawLine(pen, mid, entryEnd);
             }
 
-            g.DrawLine(pen, adjustedStart, adjustedMid);
-            if (adjustedMid != adjustedEnd)
-                g.DrawLine(pen, adjustedMid, adjustedEnd);
+            g.DrawLine(pen, entryEnd, end);
 
             DrawMultiplicity(g, start, MultiplicityFrom, start, mid);
             DrawMultiplicity(g, end, MultiplicityTo, end, mid);
@@ -83,22 +69,27 @@ namespace UML_Projekt
             switch (Type)
             {
                 case RelationType.Association:
-                    DrawArrowHead(g, end, adjustedMid, false);
+                    DrawArrowHead(g, end, entryEnd, false);
                     break;
+
                 case RelationType.Aggregation:
-                    DrawDiamond(g, start, mid, false);
+                    DrawDiamond(g, start, exitStart, false);
                     break;
+
                 case RelationType.Composition:
-                    DrawDiamond(g, start, mid, true);
+                    DrawDiamond(g, start, exitStart, true);
                     break;
+
                 case RelationType.Generalization:
-                    DrawTriangle(g, end, adjustedMid, false);
+                    DrawTriangle(g, end, entryEnd, false);
                     break;
+
                 case RelationType.Realization:
-                    DrawTriangle(g, end, adjustedMid, true);
+                    DrawTriangle(g, end, entryEnd, true);
                     break;
+
                 case RelationType.Dependency:
-                    DrawArrowHead(g, end, adjustedMid, true);
+                    DrawArrowHead(g, end, entryEnd, true);
                     break;
             }
         }
