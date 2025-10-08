@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 using System.Security.Cryptography.Xml;
+using System.Text;
 using System.Text.Json;
 using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
@@ -655,12 +656,12 @@ namespace UML_Projekt
                 connections = connections
             };
 
-            
+
             var options = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
                 Formatting = Formatting.Indented
-            }; 
+            };
 
             File.WriteAllText(path, JsonConvert.SerializeObject(data, options));
         }
@@ -716,6 +717,108 @@ namespace UML_Projekt
         private void btnImport_Click(object sender, EventArgs e)
         {
             ImportFromJsonDialog();
+        }
+
+        public void ExportElementsToCSharp(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            foreach (var el in diagramElements)
+            {
+                string className = el.Name.Replace(" ", "_"); // název souboru
+                string filePath = Path.Combine(folderPath, className + ".cs");
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine("using System;");
+                sb.AppendLine();
+
+                sb.AppendLine("namespace MyProject");
+                sb.AppendLine("{");
+                sb.AppendLine();
+
+                if (el is UmlEnum umlEnum)
+                {
+                    sb.AppendLine($"public enum {className}");
+                    sb.AppendLine("{");
+                    if (umlEnum.Values != null && umlEnum.Values.Count > 0)
+                    {
+                        for (int i = 0; i < umlEnum.Values.Count; i++)
+                        {
+                            var attr = umlEnum.Values[i];
+                            string comma = i < umlEnum.Values.Count - 1 ? "," : "";
+                            sb.AppendLine($"    {attr}{comma}");
+                        }
+                    }
+                    sb.AppendLine("}");
+                }
+                else if (el is UmlInterface umlInterface)
+                {
+                    sb.AppendLine($"public interface {className}");
+                    sb.AppendLine("{");
+                    if (umlInterface.Methods != null)
+                    {
+                        foreach (var method in umlInterface.Methods)
+                        {
+                            string returnType = string.IsNullOrWhiteSpace(method.Type) ? "void" : method.Type;
+                            sb.AppendLine($"    {returnType} {method.Name}();");
+                        }
+                    }
+                    sb.AppendLine("}");
+                }
+                else if (el is UmlClass umlClass)
+                {
+                    string classType = umlClass.IsAbstract ? "abstract class" : "class";
+                    if (umlClass.IsStatic) classType = "static class";
+
+                    sb.AppendLine($"public {classType} {className}");
+                    sb.AppendLine("{");
+
+                    // atributy
+                    if (umlClass.Atributes != null)
+                    {
+                        foreach (var attr in umlClass.Atributes)
+                        {
+                            string typeName = string.IsNullOrWhiteSpace(attr.Type) ? "object" : attr.Type;
+                            sb.AppendLine($"    public {typeName} {attr.Name} {{ get; set; }}");
+                        }
+                    }
+
+                    sb.AppendLine();
+
+                    // metody
+                    if (umlClass.Methods != null)
+                    {
+                        foreach (var method in umlClass.Methods)
+                        {
+                            string returnType = string.IsNullOrWhiteSpace(method.Type) ? "void" : method.Type;
+                            sb.AppendLine($"    public {returnType} {method.Name}()");
+                            sb.AppendLine("    {");
+                            sb.AppendLine("        throw new NotImplementedException();");
+                            sb.AppendLine("    }");
+                            sb.AppendLine();
+                        }
+                    }
+
+                    sb.AppendLine("}");
+                }
+                sb.AppendLine("}");
+                File.WriteAllText(filePath, sb.ToString());
+            }
+        }
+
+        private void btnExportCode_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+            {
+                fbd.Description = "Vyberte složku pro export C# kódu";
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    ExportElementsToCSharp(fbd.SelectedPath);
+                    MessageBox.Show("Elementy byly úspěšně exportovány do C# kódu.", "Export hotov", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
     }
 }

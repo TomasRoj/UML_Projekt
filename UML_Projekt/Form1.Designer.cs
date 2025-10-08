@@ -197,6 +197,7 @@
             btnExportCode.TabIndex = 14;
             btnExportCode.Text = "Export C#";
             btnExportCode.UseVisualStyleBackColor = true;
+            btnExportCode.Click += btnExportCode_Click;
             // 
             // Form1
             // 
